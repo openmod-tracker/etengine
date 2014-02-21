@@ -13,6 +13,44 @@ class Gql
   attr_accessor :present_graph, :future_graph, :dataset, :scenario, :calculated
   attr_reader :graph_model, :sandbox_mode
 
+  # Internal: Creates a new copy of the graph, except when the :reuse_graphs
+  # application config value is set.
+  #
+  # Caching graphs so that we can use the same objects to serve *all* requests
+  # prevents us having to clone additional copies; this saves 100ms off each
+  # response. However, this would make it impossible to create multiple
+  # scenarios in a console, since the cached graph objects will always reference
+  # the dataset from the most recently used scenario. Therefore, when the Rails
+  # console is found, caching is disabled.
+  #
+  # Returns a Qernel::Graph.
+  def self.make_graph_for(period)
+    if APP_CONFIG[:reuse_graphs]
+      NastyCache.instance.fetch(:"gql.#{ period }_graph", cache: false,
+        &Etsource::Loader.instance.method(:graph))
+    else
+      Etsource::Loader.instance.graph
+    end
+  end
+
+  private_class_method :make_graph_for
+
+  # Public: A cached copy of the graph which may be used as the "future"
+  # graph during calculation and querying.
+  #
+  # Returns a Qernel::Graph.
+  def self.future_graph
+    make_graph_for(:future)
+  end
+
+  # Public: A cached copy of the graph which may be used as the "present"
+  # graph during calculation and querying.
+  #
+  # Returns a Qernel::Graph.
+  def self.present_graph
+    make_graph_for(:present)
+  end
+
   # Initialize a Gql instance by passing a (api) scenario
   #
   # @example Initialize with scenario
@@ -59,19 +97,20 @@ class Gql
       # Assign this GQL instance the scenario, which defines the area_code,
       # end_year and the values of the sliders
       @scenario = scenario
+
       # Assign the present and future Qernel:Graph. They are both "empty" /
       # have no dataset assigned yet. The graphs are both permanent objects,
       # they stay in memory forever. So we need two different graph objects
       # (and nested objects) for present/future.
-      loader    = Etsource::Loader.instance
-      @present_graph = loader.graph
-      @future_graph  = loader.graph
+      @present_graph = self.class.present_graph
+      @future_graph  = self.class.future_graph
+
       # Assign the dataset. It is not yet assigned to the present/future
       # graphs yet, which will happen with #init_datasets or #prepare. This
       # allows for more flexibility with caching. The @dataset will hold
       # the present dataset, without any updates run. However some updates
       # also update the present graph, so it is not completely identical.
-      @dataset = loader.dataset(@scenario.area_code)
+      @dataset = Etsource::Loader.instance.dataset(@scenario.area_code)
 
       if block_given?
         self.init_datasets

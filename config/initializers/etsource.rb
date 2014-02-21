@@ -14,6 +14,11 @@ ETSOURCE_EXPORT_DIR = Etsource::Base.clean_path(
 
 Atlas.data_dir = ETSOURCE_EXPORT_DIR
 
+# When running in a "server" mode (i.e. not a console), we can reuse the same
+# Qernel::Graph objects for every request, instead of having to clone new copies
+# of the graph. This saves up to 100ms per request.
+APP_CONFIG[:reuse_graphs] = ! Rails.env.test? && ! defined?(Rails::Console)
+
 # TODO Remove this line in a week or two.
 if Atlas.data_dir.join('data').directory?
   raise <<-MESSAGE.strip_heredoc
