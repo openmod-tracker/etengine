@@ -65,6 +65,8 @@ module Etsource
       @dataset.data = load_dataset_hash
       @dataset.data[:graph][:graph] = {:calculated => false}
 
+      IceNine.deep_freeze(@dataset.data)
+
       @dataset
     end
 

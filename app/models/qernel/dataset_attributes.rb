@@ -133,7 +133,7 @@ module Qernel::DatasetAttributes
   # made accessible with the attr_accessor at the beginning of this mixin)
   def assign_dataset_attributes
     if dataset
-      @dataset_attributes   = (dataset.data[dataset_group][dataset_key] ||= {})
+      @dataset_attributes = Qernel::ObjectDataset.new(dataset.data[dataset_group][dataset_key])
       @observe_set      = nil
       @observe_get      = nil
       @observe_get_keys = []

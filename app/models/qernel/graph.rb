@@ -281,7 +281,10 @@ class Graph
       instrument("gql.performance.calculate") do
 
         if use_merit_order_demands? && future?
-          dataset_copy = DeepClone.clone @dataset #Marshal.load(Marshal.dump(@dataset))
+          # This seems convoluted, but "detach_dataset!" will set the instance
+          # variable to nil, so we need to retain a reference so that we can set
+          # it again.
+          dataset_copy = @dataset
         end
 
         calculation_loop # the initial loop

@@ -58,8 +58,10 @@ class ConverterApi
   # attribute used by merit order
   attr_accessor :load_profile_key
 
-  # dataset attributes of converter
-  dataset_accessors [:preset_demand, :demand]
+  # All dataset methods are delegated to the converter to which the attributes
+  # belong.
+  delegate *DatasetAttributes.public_instance_methods, to: :converter
+  delegate :preset_demand, :demand,                    to: :converter
 
   # Returns a ConverterApi instance based on the given Converter.
   #
@@ -94,15 +96,6 @@ class ConverterApi
 
   def inspect
     to_s
-  end
-
-  # For testing only
-  # Otherwise graphs by GraphParser won't be Gqueryable
-  # DEBT properly fix
-  if Rails.env.development? or Rails.env.test?
-    def dataset_attributes
-      converter.dataset_attributes
-    end
   end
 
   def initialize(converter_qernel, attrs = {})

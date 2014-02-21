@@ -13,6 +13,7 @@ gem 'ruby_deep_clone',        github: 'balmma/ruby-deepclone', require: 'deep_cl
 gem 'distribution', '~> 0.6'
 gem 'text-table'
 gem 'osmosis',                github: 'quintel/osmosis'
+gem 'ice_nine'
 
 # Rails gem
 gem 'simple_form'
