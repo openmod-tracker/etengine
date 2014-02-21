@@ -35,7 +35,7 @@ module Qernel
     #
     # Returns the value.
     def set(key, value)
-      @data[key.to_sym] = value
+      @data[key] = value
     end
 
     alias_method :[]=, :set
