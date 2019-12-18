@@ -28,14 +28,10 @@ module Qernel
 
         total = target_api.demand * output_slot.conversion / 3600
 
-        new_share =
-          if total.zero?
-            0.0
-          else
-            @participant.load_curve.sum { |v| v.positive? ? v : 0.0 } / total
-          end
-
-        share_link.dataset_set(:share, new_share)
+        share_link.dataset_set(
+          :share,
+          total.zero? ? 0.0 : participant_output / total
+        )
       end
 
       private
@@ -69,6 +65,11 @@ module Qernel
       def input_efficiency
         slots = @converter.converter.inputs.reject(&:loss?)
         1 / (slots.any? ? slots.sum(&:conversion) : 1.0)
+      end
+
+      # Returns the total amount of energy output by the participant.
+      def participant_output
+        @participant.output_curve.sum
       end
     end
   end
