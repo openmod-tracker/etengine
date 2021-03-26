@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v3 do
       resources :areas, :only => [:index, :show]
+      resources :gqueries, :only => :index
       resources :scenarios, :only => [:show, :create, :update] do
         member do
           get :batch
