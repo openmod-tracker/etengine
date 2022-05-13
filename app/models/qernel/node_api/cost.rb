@@ -61,6 +61,8 @@ module Qernel
         end
       end
 
+      # TODO: ask Dorine how we should rewrite this one
+
       # Public: Calculates the marginal costs for a plant in euro per MWh of produced electricity.
       #
       # The marginal costs are the extra costs made if one unit of electricity is produced. It is,
@@ -148,6 +150,8 @@ module Qernel
       #
       # This is rarely used, but features in some types of storage which have a cost associated with
       # the total installed input capacity.
+      #
+      # NOTE: this method does not work anymore with the new cost calculations
       def capacity_costs
         fetch(:capacity_costs) do
           if fixed_costs_per_mw_input_capacity
@@ -213,12 +217,16 @@ module Qernel
 
       # Internal: Calculates the total cost of a plant in euro per plant per year.
       #
-      # Total cost is made up of fixed costs and variable costs.
+      # Total cost is made up of CAPEX and OPEX.
       #
       # Returns the total costs for one plant per year.
       def total_costs
         fetch(:total_costs) do
-          fixed_costs + variable_costs if fixed_costs && variable_costs
+          if operating_expenses_ccs && operating_expenses_excluding_ccs &&
+              capital_expenditures_ccs && capital_expenditures_excluding_ccs
+            operating_expenses_ccs + operating_expenses_excluding_ccs + capital_expenditures_ccs +
+              capital_expenditures_excluding_ccs
+          end
         end
       end
 
@@ -324,26 +332,13 @@ module Qernel
         end
       end
 
-      # Internal: Calculates the variable costs for one plant.
-      #
-      # The variable costs cannot be calculated without knowing how much fuel is consumed by the
-      # plant, how much this (mix of) fuel costs etc. The logic is therefore more complex than the
-      # fixed costs.
-      #
-      # Variable costs are made up of fuel costs, co2 emission credit costs and variable operation
-      # and mainentance costs
-      #
-      # Returns the the total variable costs of one plant per year.
-      def variable_costs
-        fetch(:variable_costs) do
-          typical_input * variable_costs_per_typical_input
-        end
-      end
-
       # Internal Calculates the variable costs per typical input (in MJ).
       #
       # Unlike the variable_costs (defined above), this function does not explicitly depend on the
       # production of the plant.
+      #
+      # NOTE: this method is only used for calculating marginal costs, other cost calculations
+      # should rely on CAPEX and OPEX
       #
       # Returns a float representing cost per MJ.
       def variable_costs_per_typical_input(include_waste: true)
@@ -362,22 +357,6 @@ module Qernel
           costable *= costable_energy_factor unless include_waste
 
           costable + variable_operation_and_maintenance_costs_per_typical_input
-        end
-      end
-
-      # Internal: Calculates the fuel costs for a single plant
-      #
-      # Based on the input of fuel for one plant and the weighted costs of this / these carrier(s)
-      # per mj.
-      #
-      # Returns the the yearly fuel costs for one single plant.
-      def fuel_costs
-        fetch(:fuel_costs) do
-          if typical_input && typical_input < 0
-            raise IllegalNegativeError.new(self, :typical_input, typical_input)
-          end
-
-          typical_input * weighted_carrier_cost_per_mj
         end
       end
 
@@ -552,13 +531,16 @@ module Qernel
       end
 
       # Internal: Determines the share of output energy which is accounted for when calculating fuel
-      # and CO2 costs.
+      # costs.
       #
       # Some nodes split input energy into multiple carriers, but one or more of those is considered
       # a "waste product" and should not be considered when calculating costs. For example, a gas
       # CHP may take in gas as an input and outputs electricity, steam hot water, and loss, but only
       # electricity and part of the loss are costable byproducts of the conversion, while the heat
       # is a "free" waste product.
+      #
+      # NOTE: this method is only used for calculating marginal costs, other cost calculations
+      # should rely on CAPEX and OPEX
       #
       # Returns a numeric.
       def costable_energy_factor
@@ -575,8 +557,11 @@ module Qernel
         end
       end
 
-      # The conversions used by costable_energy_factor to determine how to calculate fuel and CO2
+      # The conversions used by costable_energy_factor to determine how to calculate fuel
       # costs based on the output carriers.
+      #
+      # NOTE: this method is only used for calculating marginal costs, other cost calculations
+      # should rely on CAPEX and OPEX
       #
       # Returns an array containing the costable conversion, loss conversion, and total of all
       # outputs. Returns an empty array if the node does not have any waste_outputs configured.

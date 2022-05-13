@@ -61,18 +61,27 @@ describe 'Qernel::NodeApi cost calculations' do
 
   describe '#total_cost' do
     it 'calculates correctly when values are given' do
-      node.with(fixed_costs: 100, variable_costs: 200)
+      node.with(
+        operating_expenses_ccs: 50, operating_expenses_excluding_ccs: 100,
+        capital_expenditures_ccs: 50, capital_expenditures_excluding_ccs: 100
+      )
       expect(node.node_api.send(:total_costs)).to eq(300)
     end
 
-    it 'returns nil when variable costs is nil' do
-      node.with(fixed_costs: 100, variable_costs: nil)
-      expect(node.node_api.send(:total_costs)).to eq(nil)
+    it 'returns nil when operating_expenses_ccs is nil' do
+      node.with(
+        operating_expenses_ccs: nil, operating_expenses_excluding_ccs: 100,
+        capital_expenditures_ccs: 50, capital_expenditures_excluding_ccs: 100
+      )
+      expect(node.node_api.send(:total_costs)).to be_nil
     end
 
-    it 'returns nil when fixed costs is nil' do
-      node.with(fixed_costs: nil, variable_costs: 200)
-      expect(node.node_api.send(:total_costs)).to eq(nil)
+    it 'returns nil when capital_expenditures_ccs is nil' do
+      node.with(
+        operating_expenses_ccs: 50, operating_expenses_excluding_ccs: 100,
+        capital_expenditures_ccs: nil, capital_expenditures_excluding_ccs: 100
+      )
+      expect(node.node_api.send(:total_costs)).to be_nil
     end
   end
 
@@ -220,13 +229,6 @@ describe 'Qernel::NodeApi cost calculations' do
     end
   end
 
-  describe '#variable_costs' do
-    it 'calculates correctly when values are given' do
-      node.with(variable_costs_per_typical_input: 300, typical_input: 2)
-      expect(node.node_api.send(:variable_costs)).to eq(600)
-    end
-  end
-
   describe '#variable_costs_per_typical_input' do
     let(:attrs) do
       {
@@ -288,31 +290,6 @@ describe 'Qernel::NodeApi cost calculations' do
           api.send(:variable_costs_per_typical_input, include_waste: false)
         ).to eq(400 + 250 + 62.5)
       end
-    end
-  end
-
-  describe '#fuel_costs' do
-    let(:attrs) do
-      {
-        typical_input: 100,
-        weighted_carrier_cost_per_mj: 10
-      }
-    end
-
-    it 'calculates when everything is set' do
-      node.with(attrs)
-      expect(api.send(:fuel_costs)).to eq(1000)
-    end
-
-    it 'returns 0 when typical_input <= 0' do
-      node.with(attrs.merge(typical_input: -1.0))
-      expect { api.send(:fuel_costs) }
-        .to raise_error(Qernel::IllegalNegativeError)
-    end
-
-    it 'raises error when typical_input is nil' do
-      node.with(attrs.merge(typical_input: nil))
-      expect { api.send(:fuel_costs) }.to raise_error(NoMethodError)
     end
   end
 

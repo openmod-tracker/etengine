@@ -77,16 +77,8 @@ module Qernel
         convert_to(cost_of_capital, unit)
       end
 
-      def variable_costs_per(unit)
-        convert_to(variable_costs, unit)
-      end
-
       def merit_order_variable_costs_per(unit)
         convert_to(merit_order_variable_costs, unit)
-      end
-
-      def fuel_costs_per(unit)
-        convert_to(fuel_costs, unit)
       end
 
       def co2_emissions_costs_per(unit)
