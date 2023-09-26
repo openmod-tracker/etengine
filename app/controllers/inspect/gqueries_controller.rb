@@ -2,6 +2,7 @@ class Inspect::GqueriesController < Inspect::BaseController
   layout 'application'
 
   before_action :find_model, :only => :show
+  skip_authorize_resource :only => :show
 
   def index
     all = Gquery.all
