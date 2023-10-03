@@ -10,7 +10,7 @@ module Qernel
       end
 
       def participant
-        @participant ||= Fever::Consumer.new(demand_curve.to_a)
+        @participant ||= Fever::Consumer.new(smoothed_demand_curve.to_a)
       end
 
       def inject!
@@ -30,6 +30,10 @@ module Qernel
       end
 
       private
+
+      def smoothed_demand_curve
+        @context.curves.smoothed_curve(@config.curve, @node) * @node.demand
+      end
 
       def demand_curve
         @context.curves.curve(@config.curve, @node) * @node.demand
