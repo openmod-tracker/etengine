@@ -2,7 +2,20 @@
   %tbody
     %tr
       %td
-        %table.table.table-condensed.table-bordered
+        .big-bar
+          - c.outputs.sort_by { |c| c.carrier.key }.each do |output_slot|
+            - bar_width = (100.0 * output_slot.conversion).round(2)
+            - unless bar_width.zero?
+              .bar-piece{ style: "width: #{bar_width}%" }
+      %td
+        .big-bar
+          - c.inputs.sort_by { |c| c.carrier.key }.each do |output_slot|
+            - bar_width = (100.0 * output_slot.conversion).round(2)
+            - unless bar_width.zero?
+              .bar-piece{ style: "width: #{bar_width}%" }
+    %tr
+      %td
+        %table.table.table-condensed
           %thead
             %tr
               %th.centered
@@ -11,6 +24,7 @@
                   = auto_number node_flow(c, :outputs)
               %th.centered Outputs
           %tbody
+            - color = -1
             - c.outputs.sort_by { |c| c.carrier.key }.each do |output_slot|
               %tr.carrier
                 %td.edges
@@ -36,15 +50,18 @@
                               - if output_edge.reversed?
                                 .more-info Reversed
                   %td.centered{ title: output_slot.carrier.key.to_s.humanize }
-                    .carrier-name{ title: output_slot.class.name }
-                      = link_to output_slot.carrier.key.to_s.humanize, inspect_carrier_path(id: output_slot.carrier.key)
+                    - color += 1 unless output_slot.conversion.round(2).zero?
+                    - color = 0 if color == 3
+                    .carrier-box{class: output_slot.conversion.round(2).zero? ? 'empty' : "output-#{color}"}
+                      .carrier-name{ title: output_slot.class.name }
+                        = link_to output_slot.carrier.key.to_s.humanize, inspect_carrier_path(id: output_slot.carrier.key)
                     - if output_slot.conversion
                       %span{ title: output_slot.conversion }
                         == #{ (100.0 * output_slot.conversion).round(2) } %
                       - if kms_slot?(output_slot)
                         .slot-unit== (#{ output_slot.conversion.round(3) } km/MJ)
       %td
-        %table.table.table-condensed.table-bordered
+        %table.table.table-condensed
           %thead
             %tr
               %th.centered Inputs
@@ -53,11 +70,15 @@
                 %span.aggregate-demand{ title: node_flow(c, :inputs) }
                   = auto_number node_flow(c, :inputs)
           %tbody
+            - color = -1
             - c.inputs.sort_by { |c| c.carrier.key }.each do |input_slot|
               %tr.carrier
                 %td.centered{ title: input_slot.carrier.key.to_s.humanize }
-                  .carrier-name{ title: input_slot.class.name }
-                    = link_to input_slot.carrier.key.to_s.humanize, inspect_carrier_path(id: input_slot.carrier.key)
+                  - color += 1 unless input_slot.conversion.round(2).zero?
+                  - color = 0 if color == 3
+                  .carrier-box{class: input_slot.conversion.round(2).zero? ? 'empty' : "output-#{color}"}
+                    .carrier-name{ title: input_slot.class.name }
+                      = link_to input_slot.carrier.key.to_s.humanize, inspect_carrier_path(id: input_slot.carrier.key)
                   - if input_slot.conversion
                     %span{ title: input_slot.conversion }
                       = "#{(100 * input_slot.conversion).round(2)} %"

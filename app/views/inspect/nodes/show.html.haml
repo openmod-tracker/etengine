@@ -9,7 +9,45 @@
 
 
 .row-fluid
-  .wide
+  .wide.flex
+    .node-flows
+      .node-flows-inner
+        %h4 Node flows
+        .energy
+          .present
+            %span.name Present
+            %span.output{ title: "Output flow: #{node_flow(@node_present, :outputs)}" }
+              = auto_number node_flow(@node_present, :outputs)
+            = energy_flow_arrow
+            %span.demand{ title: "Demand: #{@node_present.demand}" }<
+              = auto_number @node_present.demand
+            = energy_flow_arrow
+            %span.input{ title: "Input flow #{node_flow(@node_present, :inputs) }" }
+              = auto_number node_flow(@node_present, :inputs)
+          .future
+            %span.name Future
+            %span.output{ title: "Output flow: #{node_flow(@node_future, :outputs)}" }
+              = auto_number node_flow(@node_future, :outputs)
+            = energy_flow_arrow
+            %span.demand{ title: "Demand: #{@node_future.demand}" }<
+              = auto_number @node_future.demand
+            = energy_flow_arrow
+            %span.input{ title: "Input flow #{node_flow(@node_future, :inputs) }" }
+              = auto_number node_flow(@node_future, :inputs)
+        - delta = (@node_future.demand / @node_present.demand) * 100 - 100
+        - if delta.abs > 1e-5
+          .delta
+            - if delta > 0
+              :plain
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M7 11l5-5m0 0l5 5m-5-5v12" />
+                </svg>
+            - else
+              :plain
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M17 13l-5 5m0 0l-5-5m5 5V6" />
+                </svg>
+            == #{ auto_number(delta) }%
     .page-header
       %h1
         = node_key
@@ -23,44 +61,6 @@
         -# = link_to 'View document', link_to_node_file(@node_future), class: 'btn btn-small'
         -# = link_to 'Visualize present graph', {:format => 'svg'}, :target => :blank, :class => 'btn btn-small'
         -# = link_to 'Visualize future graph', {:format => 'svg', :graph => 'future'}, :target => :blank, :class => 'btn btn-small'
-
-.row-fluid.wide.node-flows
-  .node-flows-inner
-    .energy
-      .present
-        %span.name Present
-        %span.output{ title: "Output flow: #{node_flow(@node_present, :outputs)}" }
-          = auto_number node_flow(@node_present, :outputs)
-        = energy_flow_arrow
-        %span.demand{ title: "Demand: #{@node_present.demand}" }<
-          = auto_number @node_present.demand
-        = energy_flow_arrow
-        %span.input{ title: "Input flow #{node_flow(@node_present, :inputs) }" }
-          = auto_number node_flow(@node_present, :inputs)
-      .future
-        %span.name Future
-        %span.output{ title: "Output flow: #{node_flow(@node_future, :outputs)}" }
-          = auto_number node_flow(@node_future, :outputs)
-        = energy_flow_arrow
-        %span.demand{ title: "Demand: #{@node_future.demand}" }<
-          = auto_number @node_future.demand
-        = energy_flow_arrow
-        %span.input{ title: "Input flow #{node_flow(@node_future, :inputs) }" }
-          = auto_number node_flow(@node_future, :inputs)
-    - delta = (@node_future.demand / @node_present.demand) * 100 - 100
-    - if delta.abs > 1e-5
-      .delta
-        - if delta > 0
-          :plain
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M7 11l5-5m0 0l5 5m-5-5v12" />
-            </svg>
-        - else
-          :plain
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M17 13l-5 5m0 0l-5-5m5 5V6" />
-            </svg>
-        == #{ auto_number(delta) }%
 
 .tabbable.edge-flows.wide
   %ul.nav.nav-tabs

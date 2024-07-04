@@ -14,7 +14,7 @@
     %li
       %a{ 'href' => "#all-calculations", 'data-toggle' => 'tab' } Node calculations
 .tab-content.white-box.details
-  #node-summary.tab-pane.active
+  #node-summary.tab-pane{class: @serializer.attributes_and_methods_to_show.any? ? 'active' : ''}
     %table.table.table-condensed
       %thead
         %tr
@@ -40,7 +40,7 @@
                 - val = @serializer.future_value(key)
                 = opts[:formatter] ? opts[:formatter].call(val) : auto_number(val)
               %td= opts[:unit]
-  #used-in.tab-pane
+  #used-in.tab-pane{class: @serializer.attributes_and_methods_to_show.any? ? '' : 'active'}
     %h5 Used in Gqueries
     %ol
       - Gquery.name_or_query_contains(@node_present.key).sort_by(&:key).each do |gquery|

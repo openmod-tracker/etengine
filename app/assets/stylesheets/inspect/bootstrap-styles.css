@@ -29,6 +29,20 @@ th.calculation_group {
 .navbar .navbar-search {
   margin-top: 3px;
 }
+.nav-tabs > li > a {
+  border: none;
+}
+.nav-tabs > .active > a {
+  background-color: var(--overlay-color);
+  color: var(--text-color);
+  border: none;
+}
+.nav-tabs > li > a:hover, .nav-tabs > .active > a:hover,
+.nav-tabs > li > a:focus, .nav-tabs > .active > a:focus {
+  background-color: var(--overlay-color);
+  color: var(--text-color);
+  border: none;
+}
 
 .navbar .navbar-search input,
 .navbar .navbar-search .search-query {
@@ -115,31 +129,7 @@ th.calculation_group {
   margin-bottom: 15px;
   width: 100%;
   height: 36px;
-  background-color: #eee;
-  /* Old browsers */
-  background-repeat: repeat-x;
-  /* Repeat the gradient */
-  background-image: -moz-linear-gradient(top, #f5f5f5 0%, #eee 100%);
-  /* FF3.6+ */
-  background-image: -webkit-gradient(
-    linear,
-    left top,
-    left bottom,
-    color-stop(0%, #f5f5f5),
-    color-stop(100%, #eee)
-  );
-  /* Chrome,Safari4+ */
-  background-image: -webkit-linear-gradient(top, #f5f5f5 0%, #eee 100%);
-  /* Chrome 10+,Safari 5.1+ */
-  background-image: -ms-linear-gradient(top, #f5f5f5 0%, #eee 100%);
-  /* IE10+ */
-  background-image: -o-linear-gradient(top, #f5f5f5 0%, #eee 100%);
-  /* Opera 11.10+ */
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f5f5f5', endColorstr='#eeeeee',GradientType=0);
-  /* IE6-9 */
-  background-image: linear-gradient(top, #f5f5f5 0%, #eee 100%);
-  /* W3C */
-  border: 1px solid #e5e5e5;
+  background-color: var(--overlay-color);
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;
@@ -153,8 +143,6 @@ th.calculation_group {
   margin: 0;
   padding-top: 11px;
   padding-bottom: 11px;
-  border-left: 1px solid #f5f5f5;
-  border-right: 1px solid #e5e5e5;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
@@ -164,7 +152,7 @@ th.calculation_group {
 .subnav .nav > .active > a:hover {
   padding-left: 13px;
   color: #777;
-  background-color: #e9e9e9;
+  background-color: var(--overlay-color);
   border-right-color: #ddd;
   border-left: 0;
   -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.05);
@@ -277,9 +265,14 @@ table th.tablesorter-headerSortUp:after {
   background: #d64c4a;
 }
 
+.flex {
+  display: flex;
+  margin-bottom: 20px;
+}
+
 .wide {
-  width: 80vw;
-  padding-left: 10vw;
+  width: 90vw;
+  margin-left: 3vw;
 }
 
 .wide-half {
@@ -287,11 +280,11 @@ table th.tablesorter-headerSortUp:after {
 }
 
 .wide-third {
-  width: 20vw;
+  width: 33%;
 }
 
 .wide-two-thirds {
-  width: 58vw;
+  width: 65%;
 }
 
 .detail-tabs {
@@ -309,11 +302,12 @@ table th.tablesorter-headerSortUp:after {
 
 .white-box {
   padding: 10px;
-  background-color: #fff;
+  background-color: var(--overlay-color);
   border-radius: 5px;
 }
 
 .row-flex {
   display: flex;
   justify-content: space-between;
+  margin-bottom: 20px;
 }
