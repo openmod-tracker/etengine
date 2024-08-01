@@ -41,8 +41,8 @@ GIT
 
 GIT
   remote: https://github.com/quintel/refinery.git
-  revision: f3ba2fbdd83ef64311a7c58e348a9bd5bdf3fecb
-  ref: f3ba2fb
+  revision: 2878111e394ede68e1eb6ff1e8a8f47fbbb6dc78
+  ref: 2878111
   specs:
     refinery (0.0.1)
       ruby-graphviz
@@ -55,6 +55,13 @@ GIT
   ref: e36554a
   specs:
     rubel (0.1.1)
+
+GIT
+  remote: https://github.com/quintel/turbine.git
+  revision: 0d0d8eb2ecf26f93a518d05a16039867534911ef
+  ref: 0d0d8eb
+  specs:
+    turbine-graph (0.1.3)
 
 GEM
   remote: https://rubygems.org/
@@ -526,7 +533,6 @@ GEM
     thread_safe (0.3.6)
     tilt (2.0.10)
     timeout (0.4.1)
-    turbine-graph (0.1.3)
     turbo-rails (1.3.2)
       actionpack (>= 6.0.0)
       activejob (>= 6.0.0)
@@ -645,7 +651,7 @@ DEPENDENCIES
   tailwindcss-rails
   term-ansicolor (= 1.0.7)
   text-table
-  turbine-graph (>= 0.1)
+  turbine-graph!
   turbo-rails
   view_component
   watchr
