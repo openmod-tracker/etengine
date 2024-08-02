@@ -34,7 +34,11 @@ module Qernel
       include Base
 
       def net_loss_output_conversion
-        @net_loss_output_conversion ||= loss_output_conversion
+        if loss_output_conversion.zero?
+          0.0
+        else
+          output(:loss).net_conversion
+        end
       end
 
       def recalculate_net_values!

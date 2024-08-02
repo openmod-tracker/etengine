@@ -64,20 +64,17 @@ module Qernel::RecursiveFactor::Base
         #
         # [A] needs to be 100% * [B] + 100% * [C]
         demanding_share = demanding_share(edge)
-        # DONE
 
         # The output of the parent needs to be multiplied by this
         # "compensation factor" to include losses.
         #
         # See https://github.com/quintel/etengine/issues/518.
         parent_output_compensation_factor = parent.query.output_compensation_factor
-        # TODO: check this one
 
         # What part is considered to be contributing to the outcome?
         # (e.g. 80% when free_co2_factor is 20%). This is 100% when the
         # node_share method is nil.
         node_share = node_share(node_share_method)
-        # TODO: Yes yes this one too
 
         if demanding_share.zero?
           # The node has no demand, we can safely omit it.
@@ -305,7 +302,7 @@ module Qernel::RecursiveFactor::Base
   #
   # Returns a float.
   def loss_compensation_factor
-    loss_conversion = netloss_output_conversion
+    loss_conversion = net_loss_output_conversion
     loss_conversion == 1.0 ? 0.0 : (1.0 / (1.0 - loss_conversion))
   end
 

@@ -107,7 +107,9 @@ module Qernel
         :recursive_factor_ignore?,
         :rgt_edges,
         :slots,
-        :useful_demand?
+        :useful_demand?,
+        :net_demand,
+        :net_loss_output_conversion
       )
 
       # Optimization for flatten.
