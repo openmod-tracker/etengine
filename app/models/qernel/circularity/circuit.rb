@@ -10,7 +10,7 @@ module Qernel
       end
 
       def to_solvable(graph)
-        SolvableCircuit.new(@node_keys.map { |key| graph.node(key) })
+        SolvableCircuit.new(@node_keys.filter_map { |key| graph.node(key) })
       end
     end
 
@@ -74,7 +74,7 @@ module Qernel
 
       # Private: Is there at least one node with zero demand in the circuit
       def zero_node_demand?
-        @nodes.any? { |node| node.demand.zero? }
+        @nodes.any? { |node| node.net_demand.zero? }
       end
 
       # Private: is there at least one edge with zero demand in the circuit

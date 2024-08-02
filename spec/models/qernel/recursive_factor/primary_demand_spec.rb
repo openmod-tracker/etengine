@@ -327,4 +327,30 @@ RSpec.describe Qernel::RecursiveFactor::PrimaryDemand do
       expect(graph.node(:far_left)).to have_query_value(:primary_demand_of_natural_gas, 100)
     end
   end
+
+  context 'with circularities in the graph' do
+    before do
+      builder.node(:left).set(:demand, 2)
+      builder.node(:middle).set(:demand, 2)
+      builder.node(:right).set(:demand, 1)
+
+      builder.add(:far_left, demand: 0.5)
+      builder.connect(:left, :far_left, :coal)
+      builder.connect(:left, :middle, :natural_gas, circular: true)
+
+      builder.node(:left).slots.out(:natural_gas).set(:share, 0.5)
+      builder.node(:left).slots.out(:coal).set(:share, 0.25)
+      builder.node(:left).slots.out.add(:loss, share: 0.25)
+
+      # Trigger plugin
+      Qernel::Circularity::Manager.new(
+        graph,
+        [Qernel::Circularity::Circuit.new(%i[left middle left])]
+      ).calculate_net_graph
+    end
+
+    it 'the far left node has primary_demand of 1' do
+      expect(graph.node(:far_left)).to have_query_value(:primary_demand, 1)
+    end
+  end
 end

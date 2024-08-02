@@ -6,7 +6,8 @@ module Qernel::Plugins
   class Circularity
     include Plugin
 
-    after :calculation, :solve_circuits
+    # Net graph has to be created before recursive factors start, but after
+    after :recalculation, :solve_circuits
 
     def initialize(graph)
       super
@@ -15,14 +16,14 @@ module Qernel::Plugins
     end
 
     def solve_circuits
+      puts circuits
       @circularity.calculate_net_graph
     end
 
     private
 
     def circuits
-      # GRAB FROM ETSOURCE
-      graph.circuits.transform_values { |c| c.map(&:key) }
+      Etsource::Loader.instance.circuits
     end
   end
 end

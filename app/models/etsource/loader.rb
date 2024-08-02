@@ -81,6 +81,14 @@ module Etsource
       end
     end
 
+    def circuits
+      instrument("etsource.loader: circuits") do
+        cache("circuits") do
+          Circuits.new(Atlas::GraphBuilder.build.circuits, Qernel::Circularity::Circuit).import
+        end
+      end
+    end
+
     def initializer_inputs
       instrument("etsource.loader: initializer_inputs") do
         cache("initializer_inputs") do

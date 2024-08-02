@@ -93,6 +93,10 @@
         = render partial: 'object_attributes', locals: { name: 'Merit Order', object: @node_future.merit_order }
         = render partial: 'object_attributes', locals: { name: 'Network Gas', object: @node_future.network_gas }
         = render partial: 'object_attributes', locals: { name: 'Storage', object: @node_future.storage }
+        - unless @node_future.demand == @node_future.net_demand
+          %tr
+            %td Net Demand
+            %td= @node_future.net_demand
         %tr
           %td Node groups
           %td

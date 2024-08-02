@@ -27,7 +27,7 @@ class Graph
     Plugins::Causality,
     Plugins::MaxDemandRecursive,
     Plugins::ResettableSlots,
-    Plugins::Causality
+    Plugins::Circularity
   ].freeze
 
   # ---- DatasetAttributes ----------------------------------------------------
