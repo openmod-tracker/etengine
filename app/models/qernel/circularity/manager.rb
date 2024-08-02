@@ -34,10 +34,10 @@ module Qernel
 
       # TODO: discussed algorithm:
       # - Check which couple of nodes occurs the most
-      # - Of these couples, pick the circuit with lowest lenght
+      # - Of these couples, pick the circuit with lowest length
       # - If multiple, pick circuit with highest total demand OR with highest lowest_edge_demand?
       # For now we pick lowest length, so no resorting needed yet
-      def resort;end
+      def resort; end
 
       def calculate_shares!
         @circuits.each(&:recalculate_net_values!)

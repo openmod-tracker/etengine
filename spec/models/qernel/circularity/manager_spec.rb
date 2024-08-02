@@ -46,7 +46,9 @@ RSpec.describe Qernel::Circularity::Manager do
   let(:circuit2) { Qernel::Circularity::Circuit.new(%i[down middle left down_left down]) }
 
   context 'when calculating a net graph for a graph with two overlapping circuits' do
-    before { subject.calculate_net_graph }
+    before do
+      subject.calculate_net_graph
+    end
 
     it 'leaves 1.0 net_demand on the edge between middle and left' do
       expect(graph.node(:middle).output_edges.first.net_demand).to eq(1.0)
@@ -74,7 +76,11 @@ RSpec.describe Qernel::Circularity::Manager do
 
     it 'does not change the share on the left nodes coal output edge' do
       coal_output_edge = graph.node(:left).output(:coal).edges.first
-      expect(coal_output_edge.net_share).to eq(coal_output_edge.share)
+      expect(coal_output_edge.net_share).to eq(1.0)
+    end
+
+    it 'corrects the loss slot net_conversion on the left node' do
+      expect(graph.node(:left).output(:loss).net_conversion).to eq(0.5)
     end
   end
 end

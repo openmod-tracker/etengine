@@ -38,15 +38,19 @@ module Qernel
       end
 
       def recalculate_net_values!
-        # TODO: Slot conversion and edge share net attriubtes based on
-        # node and edge net_demand
-        # make sure to grab both input and output slots
+        slots.each do |slot|
+          if slot.loss?
+            slot.net_conversion = (slot.conversion * node.demand) / net_demand
+          else
+            slot.net_conversion = slot.net_external_value / net_demand
+            slot.set_net_edge_shares
+          end
+        end
       end
     end
 
     # Net attributes for Slots
     module Slot
-      # TODO: Probably we need this too??
       def net_external_value
         edge_demand = edges.filter_map(&:net_demand).sum.to_f
 
@@ -63,6 +67,18 @@ module Qernel
 
       def net_conversion=(val)
         @net_conversion = val
+      end
+
+      # Sets net shares on the edges based on net demands on the edges,
+      # to be used by recursive factor
+      def set_net_edge_shares
+        edge_demand = edges.filter_map(&:net_demand).sum.to_f
+
+        edges.each do |edge|
+          next unless edge.net_demand
+
+          edge.net_share = edge.net_demand / edge_demand
+        end
       end
     end
   end
