@@ -2,7 +2,7 @@ module Qernel
   class Edge
     extend ActiveModel::Naming
     include DatasetAttributes
-    include NetAttributes
+    include NetAttributes::Edge
 
     # Dataset ------------------------------------------------------------------
 

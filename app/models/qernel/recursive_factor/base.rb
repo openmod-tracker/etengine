@@ -64,17 +64,20 @@ module Qernel::RecursiveFactor::Base
         #
         # [A] needs to be 100% * [B] + 100% * [C]
         demanding_share = demanding_share(edge)
+        # DONE
 
         # The output of the parent needs to be multiplied by this
         # "compensation factor" to include losses.
         #
         # See https://github.com/quintel/etengine/issues/518.
         parent_output_compensation_factor = parent.query.output_compensation_factor
+        # TODO: check this one
 
         # What part is considered to be contributing to the outcome?
         # (e.g. 80% when free_co2_factor is 20%). This is 100% when the
         # node_share method is nil.
         node_share = node_share(node_share_method)
+        # TODO: Yes yes this one too
 
         if demanding_share.zero?
           # The node has no demand, we can safely omit it.
@@ -182,7 +185,7 @@ module Qernel::RecursiveFactor::Base
         #      - flexible are assigned share of 1.0 if nil
         #      - constant are assigned share of 0.0 if nil
         #
-        edge_share = edge.share
+        edge_share = edge.net_share
 
         if edge_share.nil?
           # Following code would make sure that combined edge_shares would not
@@ -201,7 +204,7 @@ module Qernel::RecursiveFactor::Base
         # +---o slot(0.1) <--(1.0)-- [C] (method: 80)
         #
         # [A] should then be: (0.9 * 1.0 * 100) + (0.1 * 1.0 * 80)
-        parent_conversion = self.input(edge.carrier)&.conversion || 1.0
+        parent_conversion = self.input(edge.carrier)&.net_conversion || 1.0
 
         if edge_share.zero? || parent_conversion.zero?
           # If the share or parent_conversion is 0.0 there is no point in
@@ -302,7 +305,7 @@ module Qernel::RecursiveFactor::Base
   #
   # Returns a float.
   def loss_compensation_factor
-    loss_conversion = loss_output_conversion
+    loss_conversion = netloss_output_conversion
     loss_conversion == 1.0 ? 0.0 : (1.0 / (1.0 - loss_conversion))
   end
 
@@ -331,7 +334,7 @@ module Qernel::RecursiveFactor::Base
   # Returns a numeric.
   def output_efficiency_compensation_factor
     factor = outputs.sum do |output|
-      output.carrier.loss? || output.carrier.coupling_carrier? ? 0.0 : output.conversion
+      output.carrier.loss? || output.carrier.coupling_carrier? ? 0.0 : output.net_conversion
     end
 
     factor > 1 ? 1.0 / factor : 1.0
@@ -344,7 +347,7 @@ module Qernel::RecursiveFactor::Base
   #
   # Returns a numeric.
   def input_compensation_factor
-    1.0 / inputs.sum { |input| input.carrier.coupling_carrier? ? 0.0 : input.conversion }
+    1.0 / inputs.sum { |input| input.carrier.coupling_carrier? ? 0.0 : input.net_conversion }
   end
 
   # Public: The parent share of the edge.
@@ -356,7 +359,7 @@ module Qernel::RecursiveFactor::Base
   def demanding_share(edge)
     return 0.0 if edge.loss?
 
-    demanding_share = (edge.demand || 0.0) / (demand || 0.0)
+    demanding_share = (edge.net_demand || 0.0) / (net_demand || 0.0)
     demanding_share.nan? || demanding_share.infinite? ? 0.0 : demanding_share
   end
 

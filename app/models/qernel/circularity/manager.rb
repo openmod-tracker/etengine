@@ -1,28 +1,30 @@
+# frozen_string_literal: true
+
 module Qernel
   module Circularity
+    # Solves circuits in the graph and sets net attributes for RecursiveFactor
     class Manager
       # Array of Qernel::Circularity::Circuit's from etsource cache goes inside!
       def initialize(graph, circuits)
         @graph = graph
-        @circuits = circuits.to_solvable(graph)
+        @circuits = circuits.map { |c| c.to_solvable(graph) }
       end
 
       def calculate_net_graph
-        # pls make this more ruby
+        # TODO: pls make this more ruby
         while (circuit = next_circuit)
           next if circuit.solved?
 
           circuit.solve
         end
 
-        # calculate shares!
+        calculate_shares!
       end
 
       private
 
       def next_circuit
-        # TODO: check which couple of nodes occurs the most
-        # for now we pick lowest length
+        resort
         sorted.pop
       end
 
@@ -30,16 +32,15 @@ module Qernel
         @sorted ||= @circuits.sort_by(&:length)
       end
 
+      # TODO: discussed algorithm:
+      # - Check which couple of nodes occurs the most
+      # - Of these couples, pick the circuit with lowest lenght
+      # - If multiple, pick circuit with highest total demand OR with highest lowest_edge_demand?
+      # For now we pick lowest length, so no resorting needed yet
+      def resort;end
+
       def calculate_shares!
-        # TODO: calculate all new net demands on nodes
-        # This should be a method on SolvableCircuit
-        # that calls a net demand method on affected nodes
-
-        # TODO: calculate all new shares of slots and edges for RF
-        # Also a method on SolvableCircuit
-        # that calls a net demand method on affected nodes
-
-        # Could it be the same method?
+        @circuits.each(&:recalculate_net_values!)
       end
     end
   end

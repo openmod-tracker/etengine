@@ -63,6 +63,7 @@ class Node
   extend ActiveModel::Naming
 
   include DatasetAttributes
+  include NetAttributes::Node
 
   attr_reader  :id,
                :output_edges,
