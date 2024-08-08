@@ -1,3 +1,7 @@
 <%= turbo_frame_tag :newsletter do %>
   <%= render(Identity::NewsletterStatusRowComponent.new(subscribed: ETEngine::Mailchimp.subscribed?(current_user.email))) %>
 <% end %>
+
+<%= turbo_frame_tag :changelog do %>
+  <%= render(Identity::ChangelogStatusRowComponent.new(subscribed: ETEngine::Mailchimp.changelog_subscribed?(current_user.email))) %>
+<% end %>

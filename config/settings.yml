@@ -47,4 +47,5 @@ auth:
 # Optional settings to configure the Mailchimp integration.
 mailchimp:
   list_url: <%= ENV.fetch('MAILCHIMP_LIST_URL', nil) %>
+  changeloglist_url: <%= ENV.fetch('MAILCHIMP_CHANGELOGLIST_URL', nil) %>
   api_key: <%= ENV.fetch('MAILCHIMP_API_KEY', nil) %>

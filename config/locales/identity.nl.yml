@@ -97,9 +97,15 @@ nl:
       newsletter_subscribed:
         title: Geabonneerd op de nieuwsbrief
         message: Kijk in je mailbox om je inschrijving te bevestigen.
+      changelog_subscribed:
+        title: Geabonneerd op de changelog
+        message: Je bent geabonneerd op de changelog van het Energietransitiemodel. Controleer je e-mailbox om je inschrijving te bevestigen.
       newsletter_unsubscribed:
         title: Afgemeld voor de nieuwsbrief
         message: Je hebt je uitgeschreven voor onze nieuwsbrief.
+      changelog_unsubscribed:
+        title: Afgemeld voor de changelog
+        message: Je hebt je uitgeschreven voor de changelog van het Energietransitiemodel.
 
     newsletter_status_row_component:
       title: E-mail nieuwsbrief
@@ -225,8 +231,8 @@ nl:
           verwijderen. U wordt om bevestiging gevraagd op de volgende pagina.
         warning_header: Je staat op het punt om jouw account te verwijderen!
         warning: |
-          Al jouw data - waaronder jouw naam en e-mailadres, scenario's en transitiepaden - zullen 
-          worden verwijderd. Als je gedeelde scenario's hebt met andere gebruikers zullen zij niet 
+          Al jouw data - waaronder jouw naam en e-mailadres, scenario's en transitiepaden - zullen
+          worden verwijderd. Als je gedeelde scenario's hebt met andere gebruikers zullen zij niet
           langer toegang hebben tot deze scenario's.
         irreversible: Dit is onomkeerbaar.
         confirm: |

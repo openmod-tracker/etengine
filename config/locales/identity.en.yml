@@ -98,9 +98,15 @@ en:
       newsletter_subscribed:
         title: Subscribed to newsletter
         message: Please check your e-mail inbox to confirm your subscription.
+      changelog_subscribed:
+        title: Subscribed to changelog
+        message: You have been subscribed to our changelog. Please check your e-mail inbox to confirm your subscription.
       newsletter_unsubscribed:
         title: Unsubscribed from newsletter
         message: You have been unsubscribed from our newsletter.
+      changelog_unsubscribed:
+        title: Unsubscribed from changelog
+        message: You have been unsubscribed from our changelog.
 
     newsletter_status_row_component:
       subscribed: Subscribed

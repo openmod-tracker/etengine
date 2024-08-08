@@ -12,6 +12,7 @@ module Identity
 
     def update
       @subscribed = ActiveModel::Type::Boolean.new.cast(params[:subscribed])
+      @changelog_subscribed = ActiveModel::Type::Boolean.new.cast(params[:changelog_subscribed])
 
       service = if @subscribed
         CreateNewsletterSubscription
@@ -19,18 +20,24 @@ module Identity
         DeleteNewsletterSubscription
       end
 
-      service.new.call(user: current_user).either(
-        lambda do |_|
-          respond_to do |format|
-            format.turbo_stream
-            format.html { redirect_to(identity_profile_path) }
-          end
-        end,
-        lambda do |error|
-          Sentry.capture_exception(error)
-          redirect_to(identity_profile_path)
+      changelog_service = if @changelog_subscribed
+        CreateChangelogSubscription
+      else
+        DeleteChangelogSubscription
+      end
+
+      service_result = service.new.call(user: current_user)
+      changelog_service_result = changelog_service.new.call(user: current_user)
+
+      if service_result.success? && changelog_service_result.success?
+        respond_to do |format|
+          format.turbo_stream
+          format.html { redirect_to(identity_profile_path) }
         end
-      )
+      else
+        Sentry.capture_exception(service_result.failure || changelog_service_result.failure)
+        redirect_to(identity_profile_path)
+      end
     end
 
     private
