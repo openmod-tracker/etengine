@@ -105,6 +105,7 @@ module Qernel::Plugins
         next unless adapter.installed?
 
         if participant.is_a?(Array)
+          puts "yes #{participant}"
           participant.each { |part| @order.add(part) }
         else
           @order.add(participant)

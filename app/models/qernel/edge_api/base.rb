@@ -28,7 +28,8 @@ module Qernel
         :parent_share,
         :rgt_node,
         :sector,
-        :share?
+        :share?,
+        :circular?
       )
 
       # For testing.

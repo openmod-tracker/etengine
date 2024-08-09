@@ -26,6 +26,11 @@ module Qernel
       def net_share=(val)
         @net_share = val
       end
+
+      def reset_net_values!
+        @net_demand = demand
+        @net_share = share
+      end
     end
 
     # Nodes have to recalculate all net attributes of edges and slots in order
@@ -51,6 +56,13 @@ module Qernel
           end
         end
       end
+
+      def reset_net_values!
+        @net_demand = demand
+        slots.each(&:reset_net_values!)
+        input_edges.each(&:reset_net_values!)
+        output_edges.each(&:reset_net_values!)
+      end
     end
 
     # Net attributes for Slots
@@ -73,13 +85,17 @@ module Qernel
         @net_conversion = val
       end
 
+      def reset_net_values!
+        @net_conversion = conversion
+      end
+
       # Sets net shares on the edges based on net demands on the edges,
       # to be used by recursive factor
       def set_net_edge_shares
         edge_demand = edges.filter_map(&:net_demand).sum.to_f
 
         edges.each do |edge|
-          next unless edge.net_demand
+          next if edge.net_demand.blank?
 
           edge.net_share = edge.net_demand / edge_demand
         end

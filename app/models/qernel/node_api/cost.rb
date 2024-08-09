@@ -71,12 +71,14 @@ module Qernel
       # Returns the marginal costs per MWh (produced electricity)
       def marginal_costs
         fetch(:marginal_costs, false) do
+          puts "YO" if key == :industry_chp_engine_gas_power_fuelmix
           if output(:electricity).nil?
             nil
           elsif electricity_output_conversion.zero?
             0.0
           else
             costs = variable_costs_per_typical_input(include_waste: false)
+            puts costs if key == :industry_chp_engine_gas_power_fuelmix
             (costs.negative? ? 0.0 : costs) *
               SECS_PER_HOUR / # Highlighting
               electricity_output_conversion
@@ -373,8 +375,11 @@ module Qernel
             co2_emissions_costs_per_typical_input +
             captured_biogenic_co2_costs_per_typical_input
 
+          # DEZE IS NAN
+          puts weighted_carrier_cost_per_mj if key == :industry_chp_engine_gas_power_fuelmix
+          puts weighted_carrier_potential_co2_per_mj if key == :industry_chp_engine_gas_power_fuelmix
           costable *= costable_energy_factor unless include_waste
-
+          puts costable if key == :industry_chp_engine_gas_power_fuelmix
           costable + variable_operation_and_maintenance_costs_per_typical_input
         end
       end

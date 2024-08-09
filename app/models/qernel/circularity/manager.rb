@@ -13,12 +13,17 @@ module Qernel
       def calculate_net_graph
         # TODO: pls make this more ruby
         while (circuit = next_circuit)
+          circuit.setup
           next if circuit.solved?
 
           circuit.solve
         end
 
         calculate_shares!
+      end
+
+      def reset!
+        @circuits.reject(&:skip?).each(&:reset_net_values!)
       end
 
       private
@@ -29,7 +34,7 @@ module Qernel
       end
 
       def sorted
-        @sorted ||= @circuits.sort_by(&:length)
+        @sorted ||= @circuits.reject(&:skip?).sort_by(&:length)
       end
 
       # TODO: discussed algorithm:
@@ -40,7 +45,7 @@ module Qernel
       def resort; end
 
       def calculate_shares!
-        @circuits.each(&:recalculate_net_values!)
+        @circuits.select(&:should_recalculate?).each(&:recalculate_net_values!)
       end
     end
   end

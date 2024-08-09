@@ -190,7 +190,7 @@ module Qernel::RecursiveFactor::Base
           #
           #   total_edge_shares = valid_edges.map(&:share).compact.sum
           #   edge_share = (1.0 - total_edge_shares) / valid_edges.length
-          edge_share = 1.0
+          edge_share = edge.circular? ? 0.0 : 1.0
         end
 
         # We have to multiply the share with the conversion of the

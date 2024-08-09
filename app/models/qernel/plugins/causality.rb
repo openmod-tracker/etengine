@@ -78,6 +78,10 @@ module Qernel::Plugins
     end
 
     def inject(lifecycle)
+      puts 'yo'
+      puts @hydrogen.order
+      puts @merit.order
+
       merit_calc = Merit::StepwiseCalculator.new.calculate(@merit.order)
       hydrogen_calc = Merit::StepwiseCalculator.new.calculate(@hydrogen.order)
 

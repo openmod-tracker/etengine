@@ -84,7 +84,14 @@ module Etsource
     def circuits
       instrument("etsource.loader: circuits") do
         cache("circuits") do
-          Circuits.new(Atlas::GraphBuilder.build.circuits, Qernel::Circularity::Circuit).import
+         [
+          Qernel::Circularity::Circuit.new(%i[
+            energy_distribution_crude_oil
+            energy_chemical_other_transformation_external_coupling_node
+            energy_distribution_crude_oil
+          ])
+         ]
+          # Circuits.new(Atlas::GraphBuilder.build.circuits { |e| e.get(:type) == :circular }, Qernel::Circularity::Circuit).import
         end
       end
     end

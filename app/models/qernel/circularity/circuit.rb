@@ -29,6 +29,10 @@ module Qernel
         zero_node_demand? || zero_edge_demand?
       end
 
+      def skip?
+        @nodes.any? { |node| node.net_demand.nil? }
+      end
+
       # Public: All edges between the nodes in the circuit
       #
       # Returns an array of Qernel::Edge's
@@ -60,6 +64,19 @@ module Qernel
         min_demand = lowest_edge_demand
         edges.each { |edge| edge.net_subtract(min_demand) }
         @nodes[...-1].each { |node| node.net_subtract(min_demand) }
+        should_recalculate
+      end
+
+      def setup
+        @should_recalculate = false
+      end
+
+      def should_recalculate
+        @should_recalculate = true
+      end
+
+      def should_recalculate?
+        @should_recalculate
       end
 
       # Public: Calls nodes, slots and edges to recalculate net demands, shares and
@@ -70,11 +87,15 @@ module Qernel
         @nodes.each(&:recalculate_net_values!)
       end
 
+      def reset_net_values!
+        @nodes.each(&:reset_net_values!)
+      end
+
       private
 
       # Private: Is there at least one node with zero demand in the circuit
       def zero_node_demand?
-        @nodes.any? { |node| node.net_demand.zero? }
+        @nodes.any? { |node| node.net_demand.nil? || node.net_demand.zero? }
       end
 
       # Private: is there at least one edge with zero demand in the circuit

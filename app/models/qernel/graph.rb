@@ -16,6 +16,7 @@ class Graph
   extend  ActiveModel::Naming
   include ActiveSupport::Callbacks
   include Instrumentable
+  include Plugins::Circularity
 
   define_callbacks :calculate,
                    :calculate_initial_loop
@@ -26,8 +27,7 @@ class Graph
     Plugins::Molecules,
     Plugins::Causality,
     Plugins::MaxDemandRecursive,
-    Plugins::ResettableSlots,
-    Plugins::Circularity
+    Plugins::ResettableSlots
   ].freeze
 
   # ---- DatasetAttributes ----------------------------------------------------
@@ -359,6 +359,9 @@ class Graph
       @finished_nodes << @node_stack.delete_at(index)
     end
     update_edge_shares
+    # Maybe we just put it here then ??
+    clean_up_circuits
+    solve_circuits
   end
 
 
