@@ -7,7 +7,9 @@ module Qernel
     # Base net_demand attributes for Nodes and Edges
     module Base
       def net_demand
-        @net_demand ||= demand
+        return demand unless @net_demand
+
+        @net_demand
       end
 
       def net_subtract(amount)
@@ -20,7 +22,9 @@ module Qernel
       include Base
 
       def net_share
-        @net_share ||= share
+        return share unless @net_share
+
+        @net_share
       end
 
       def net_share=(val)
@@ -78,7 +82,9 @@ module Qernel
       end
 
       def net_conversion
-        @net_conversion ||= conversion
+        return conversion unless @net_conversion
+
+        @net_conversion
       end
 
       def net_conversion=(val)

@@ -220,6 +220,7 @@ module Qernel::RecursiveFactor::Base
             (value_type == :value ? input_compensation_factor : 1.0)
         end
       end
+      puts key if !val.sum.zero? && val.sum.nan?
 
       val.sum
     end

@@ -359,7 +359,6 @@ class Graph
       @finished_nodes << @node_stack.delete_at(index)
     end
     update_edge_shares
-    # Maybe we just put it here then ??
     clean_up_circuits
     solve_circuits
   end
