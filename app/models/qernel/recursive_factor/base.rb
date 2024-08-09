@@ -216,16 +216,8 @@ module Qernel::RecursiveFactor::Base
             value_type: value_type
           )
 
-
-          hello = edge_share * parent_value * parent_conversion *
+          edge_share * parent_value * parent_conversion *
             (value_type == :value ? input_compensation_factor : 1.0)
-
-          if hello.nan?
-            puts "#{edge.rgt_node.key} #{edge_share}"
-            puts parent_value
-            puts parent_conversion
-          end
-          hello
         end
       end
 

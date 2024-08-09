@@ -12,8 +12,11 @@ module Qernel
 
       def calculate_net_graph
         # TODO: pls make this more ruby
+        puts "solving!"
+        puts @circuits.edges
         while (circuit = next_circuit)
           circuit.setup
+          puts "solved? #{circuit.solved?}"
           next if circuit.solved?
 
           circuit.solve

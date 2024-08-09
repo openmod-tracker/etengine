@@ -62,6 +62,7 @@ module Qernel
       end
 
       def reset_net_values!
+        puts "resetting net demand node from #{@net_demand}"
         @net_demand = nil
         slots.each(&:reset_net_values!)
         input_edges.each(&:reset_net_values!)
