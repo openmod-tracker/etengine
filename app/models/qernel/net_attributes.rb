@@ -32,8 +32,8 @@ module Qernel
       end
 
       def reset_net_values!
-        @net_demand = demand
-        @net_share = share
+        @net_demand = nil
+        @net_share = nil
       end
     end
 
@@ -62,7 +62,7 @@ module Qernel
       end
 
       def reset_net_values!
-        @net_demand = demand
+        @net_demand = nil
         slots.each(&:reset_net_values!)
         input_edges.each(&:reset_net_values!)
         output_edges.each(&:reset_net_values!)
@@ -92,7 +92,7 @@ module Qernel
       end
 
       def reset_net_values!
-        @net_conversion = conversion
+        @net_conversion = nil
       end
 
       # Sets net shares on the edges based on net demands on the edges,
@@ -103,7 +103,7 @@ module Qernel
         edges.each do |edge|
           next if edge.net_demand.blank?
 
-          edge.net_share = edge.net_demand / edge_demand
+          edge.net_share = edge.net_demand.zero? ? 0.0 : edge.net_demand / edge_demand
         end
       end
     end
