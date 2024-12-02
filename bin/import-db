@@ -162,6 +162,7 @@ commands =
   when /tbz$/ then import_dbbot_commands(file)
   when /bz2$/ then import_db_commands('bunzip2 -c %s | bin/rails db', file)
   when /gz$/  then import_db_commands('gunzip -c %s | bin/rails db', file)
+  when /xz$/  then import_db_commands('xz -dc %s | bin/rails db', file)
   when /sql$/ then import_db_commands('bin/rails db < %s', file)
   end
 
