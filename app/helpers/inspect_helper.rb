@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module InspectHelper
   # Returns all keys which may be searched for in the inspect interface.
   def search_keys_json
@@ -13,37 +15,39 @@ module InspectHelper
   end
 
   def title_tag_number(value)
-    if value.is_a?(Numeric) && value.to_f.finite?
+    return unless value.is_a?(Numeric) && value.to_f.finite?
+
       if value.between?(-1, 1)
         value.to_f # scientific notation
       else
-        number_with_delimiter value
+        number_with_delimiter(value)
       end
-    end
   end
 
   def result_fields(present, future, attr_name = nil)
     present_value = present.instance_eval(attr_name.to_s)
     future_value  = future.instance_eval(attr_name.to_s)
 
-    haml_tag :td, auto_number(present_value), :title => title_tag_number(present_value)
-    haml_tag :td, auto_number(future_value), :title => title_tag_number(future_value)
+    concat(content_tag(:td, auto_number(present_value), title: title_tag_number(present_value)))
+    concat(content_tag(:td, auto_number(future_value), title: title_tag_number(future_value)))
 
     change_field(present_value, future_value)
-  rescue => e
-    haml_tag :td, :colspan => 2 do
-      haml_concat "ERROR (#{e})"
-    end
+  rescue StandardError => e
+    concat(content_tag(:td, colspan: 2) { "ERROR (#{e})" })
   end
 
   def change_field(present_value, future_value)
-    haml_tag :'td.change' do
-      if future_value == 0.0 and present_value == 0.0
-        haml_concat ''
+    concat(content_tag(:td, class: 'change') do
+      if future_value == 0.0 && present_value == 0.0
+        ''.html_safe
       else
-        haml_concat "#{(((future_value / present_value) - 1) * 100).to_i}%" rescue '-'
+        begin
+          "#{(((future_value / present_value) - 1) * 100).to_i}%"
+        rescue StandardError
+          '-'
+        end
       end
-    end
+    end)
   end
 
   def breadcrumb(x)
@@ -59,30 +63,30 @@ module InspectHelper
   # The various _search_box partials make use of these methods
 
   def gqueries_autocomplete_map_cache
-    Rails.cache.fetch "gqueries_autocomplete_map_cache" do
+    Rails.cache.fetch('gqueries_autocomplete_map_cache') do
       loader.gqueries.sort_by(&:key).map do |gquery|
-        {label: gquery.key, url: inspect_gquery_path(:id => gquery.key)}
+        { label: gquery.key, url: inspect_gquery_path(id: gquery.key) }
       end.to_json
     end
   end
 
   def inputs_autocomplete_map_cache
-    Rails.cache.fetch "inputs_autocomplete_map_cache" do
-      Input.all.map {|a| {label: a.key, url: inspect_input_path(:id => a.id)} }.to_json
+    Rails.cache.fetch('inputs_autocomplete_map_cache') do
+      Input.all.map { |a| { label: a.key, url: inspect_input_path(id: a.id) } }.to_json
     end
   end
 
   def nodes_autocomplete_map_cache
-    Rails.cache.fetch "nodes_autocomplete_map_cache" do
+    Rails.cache.fetch('nodes_autocomplete_map_cache') do
       nodes.sort_by(&:key).map do |a|
-        {label: a.key, url: inspect_node_path(:id => a)}
+        { label: a.key, url: inspect_node_path(id: a) }
       end.to_json
     end
   end
 
   def carriers_autocomplete_map_cache
-    Rails.cache.fetch "carriers_autocomplete_map_cache" do
-      carriers.sort_by(&:key).map {|a| {label: a.key, url: inspect_carrier_path(:id => a)} }.to_json
+    Rails.cache.fetch('carriers_autocomplete_map_cache') do
+      carriers.sort_by(&:key).map { |a| { label: a.key, url: inspect_carrier_path(id: a) } }.to_json
     end
   end
 
@@ -118,8 +122,8 @@ module InspectHelper
 
     rev = 'HEAD' if rev.blank?
 
-    "https://github.com/quintel/etsource/blob/#{ rev }/" \
-    "#{ doc.path.relative_path_from(Atlas.data_dir) }"
+    "https://github.com/quintel/etsource/blob/#{rev}/" \
+      "#{doc.path.relative_path_from(Atlas.data_dir)}"
   end
 
   def link_to_edge_file(edge)
@@ -135,8 +139,8 @@ module InspectHelper
 
     rev = 'HEAD' if rev.blank?
 
-    "https://github.com/quintel/etsource/blob/#{ rev }/" \
-    "#{ doc.path.relative_path_from(Atlas.data_dir) }"
+    "https://github.com/quintel/etsource/blob/#{rev}/" \
+      "#{doc.path.relative_path_from(Atlas.data_dir)}"
   end
 
   def kms_slot?(slot)
@@ -167,9 +171,8 @@ module InspectHelper
       css_class.push('warning')
     end
 
-    haml_tag("span.#{css_class.join('.')}") do
-      haml_concat((time * 1000).round(2))
-      haml_concat(' ms')
+    content_tag(:span, class: css_class.join(' ')) do
+      "#{(time * 1000).round(2)} ms"
     end
   end
 
