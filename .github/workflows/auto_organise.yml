@@ -1,0 +1,42 @@
+name: Add new issue to Project with custom fields
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  add_issue_to_project:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Add issue to project
+        id: add_to_project
+        uses: actions/add-to-project@v1
+        with:
+          project-url: https://github.com/orgs/quintel/projects/17/  # Replace with your project URL
+          github-token: ${{ secrets.GITHUB_TOKEN }}  # TODO switch to a PAT if needed
+
+      - name: Set custom fields on project item
+        env:
+          # TODO Replace these with actual GraphQL IDs
+          PROJECT_ID: "<PROJECT_ID>"
+          STATUS_FIELD_ID: "<STATUS_FIELD_ID>"
+          STATUS_OPTION_ID: "<STATUS_OPTION_ID>"  # Option for "To Be Categorised"
+          PHASE_FIELD_ID: "<PHASE_FIELD_ID>"
+          PHASE_OPTION_ID: "<PHASE_OPTION_ID>"    # Option for "Not started"
+          ITEM_ID: ${{ steps.add_to_project.outputs.item_id }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Setting Status field..."
+          curl -X POST \
+            -H "Authorization: bearer $GITHUB_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"query\": \"mutation { updateProjectV2ItemFieldValue(input: { projectId: \\\"$PROJECT_ID\\\", itemId: \\\"$ITEM_ID\\\", fieldId: \\\"$STATUS_FIELD_ID\\\", value: { singleSelectOptionId: \\\"$STATUS_OPTION_ID\\\" } }) { projectV2Item { id } } }\"}" \
+            https://api.github.com/graphql
+
+          echo "Setting phase field..."
+          curl -X POST \
+            -H "Authorization: bearer $GITHUB_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"query\": \"mutation { updateProjectV2ItemFieldValue(input: { projectId: \\\"$PROJECT_ID\\\", itemId: \\\"$ITEM_ID\\\", fieldId: \\\"$PHASE_FIELD_ID\\\", value: { singleSelectOptionId: \\\"$PHASE_OPTION_ID\\\" } }) { projectV2Item { id } } }\"}" \
+            https://api.github.com/graphql
