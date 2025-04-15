@@ -84,7 +84,9 @@ class User < ApplicationRecord
   # id.
   # Also rescue from Deadlock: https://github.com/rails/rails/issues/54281
   rescue ActiveRecord::RecordNotUnique, ActiveRecord::Deadlocked, ActiveRecord::LockWaitTimeout
-    User.find_by(id: token['sub'])
+    user = User.find_by(id: id)
+    user&.update(name: name, user_email: email, admin: admin.presence || false)
+    user
   end
 
   def self.from_session_user!(identity_user)
